@@ -1,4 +1,4 @@
-function senderMSG(mensagem) {
+function senderMSG(mensagem,nome) {
     //depois colocar nome e data [HH:MM:SS] [<usuário>]: <mensagem>
     const senderamqp = require('amqplib/callback_api');
     //
@@ -11,9 +11,11 @@ function senderMSG(mensagem) {
                 throw channelError;
             }
             const QUEUE = 'meuFanout';
+            let data = Date.now();
+            let mensagemfinal = `${data} ${nome}: ${mensagem}`;
             channel.assertQueue(QUEUE, 'fanout', {durable: false});
             channel.sendToQueue(QUEUE, Buffer.from(mensagem));
-            console.log(`Mensagem enviada ${mensagem}`);
+            console.log(`Mensagem enviada ${mensagemfinal}`);
         })
     })
     //
