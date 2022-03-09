@@ -149,11 +149,18 @@ app.get("/chat", checkToken, async (req, res) => {
                 }
                 const QUEUE = 'meuFanout';
                 channel.assertQueue(QUEUE, 'fanout');
+
+                let list = [];
             
                 channel.consume(QUEUE, (msg) => {
-                    console.log(`Mensagens: ${msg.content}`);
-                    res.status(200).json({ msg: msg.content});
+                  console.log(`Mensagens: ${msg.content}`);
+                  list.push(msg.content.toString());
                 })
+
+                setTimeout(function() {
+                  connection.close();
+                  res.status(200).json({ msg: list});
+                }, 500);
             })
         })
     } catch (error) {
